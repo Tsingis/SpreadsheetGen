@@ -1,0 +1,68 @@
+using System.Text;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+
+namespace SpreadsheetGen.Extensions;
+
+internal static class WorksheetPartExtensions
+{
+    internal static void AddTable(this WorksheetPart worksheetPart, int rowCount, List<string> headers)
+    {
+        const string startCell = "A1";
+        var endCell = $"{GetColumnName(headers.Count)}{rowCount}";
+        var tableRange = $"{startCell}:{endCell}";
+
+        var tableDefPart = worksheetPart.AddNewPart<TableDefinitionPart>();
+        tableDefPart.Table = new Table
+        {
+            Id = 1,
+            Name = "Table1",
+            DisplayName = "Table1",
+            Reference = tableRange,
+            TotalsRowShown = false,
+            AutoFilter = new AutoFilter { Reference = tableRange },
+            TableColumns = new TableColumns { Count = (uint)headers.Count }
+        };
+
+        for (uint i = 0; i < headers.Count; i++)
+        {
+            tableDefPart.Table.TableColumns.AppendChild(new TableColumn
+            {
+                Id = i + 1,
+                Name = headers[(int)i]
+            });
+        }
+
+        tableDefPart.Table.TableStyleInfo = new TableStyleInfo
+        {
+            Name = "TableStyleMedium2",
+            ShowFirstColumn = false,
+            ShowLastColumn = false,
+            ShowRowStripes = true,
+            ShowColumnStripes = false
+        };
+
+        var tableParts = worksheetPart.Worksheet.Elements<TableParts>().FirstOrDefault();
+        if (tableParts == null)
+        {
+            tableParts = new TableParts { Count = 1 };
+            worksheetPart.Worksheet.AppendChild(tableParts);
+        }
+        tableParts.AppendChild(new TablePart { Id = worksheetPart.GetIdOfPart(tableDefPart) });
+    }
+
+    private static string GetColumnName(int columnIndex)
+    {
+        var dividend = columnIndex;
+        var sb = new StringBuilder();
+        while (dividend > 0)
+        {
+            var modulo = (dividend - 1) % 26;
+            sb.Insert(0, Convert.ToChar(65 + modulo));
+            dividend = (dividend - modulo) / 26;
+        }
+        return sb.ToString();
+    }
+
+}
+

@@ -1,0 +1,5 @@
+{
+  "dotnet.defaultSolution": "spreadsheetgen.slnx",
+  "dotnet.testWindow.useTestingPlatformProtocol": true,
+  "editor.formatOnSave": true
+}
