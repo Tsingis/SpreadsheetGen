@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "sunday"
+      time: "21:00"
+      timezone: "Europe/Helsinki"
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "sunday"
+      time: "21:00"
+      timezone: "Europe/Helsinki"
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "sunday"
+      time: "21:00"
+      timezone: "Europe/Helsinki"

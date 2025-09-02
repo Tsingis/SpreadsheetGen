@@ -1,0 +1,28 @@
+name: benchmark
+on:
+  workflow_dispatch:
+    inputs:
+      rowCounts:
+        description: "Number of rows separated with comma"
+        required: true
+        type: string
+        default: "10,100,1000"
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: ./global.json
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore
+      - name: Benchmark
+        run: |
+          dotnet run -c Release --no-restore --no-build --project SpreadsheetGen.Benchmarks -- ${{ inputs.rowCounts }}
+          cat BenchmarkDotNet.Artifacts/results/*-report-github.md >> $GITHUB_STEP_SUMMARY

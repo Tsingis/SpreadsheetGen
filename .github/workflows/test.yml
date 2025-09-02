@@ -1,0 +1,57 @@
+name: test
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**.cs"
+      - "**.csproj"
+      - "**.props"
+      - "global.json"
+      - ".github/workflows/test.yml"
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "windows-latest"]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: ./global.json
+      - name: Install Report Generator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build -c Release --no-restore
+      - name: Test & collect coverage
+        shell: pwsh
+        run: |
+          dotnet test -c Release --no-restore --no-build -- `
+            --coverage `
+            --coverage-output-format xml `
+            --coverage-output ${{ github.workspace }}/coverage.xml
+      - name: Find coverage files and generate report
+        if: matrix.os == 'ubuntu-latest'
+        shell: pwsh
+        run: |
+          reportgenerator -reports:"${{ github.workspace }}/**/coverage.xml" `
+                          -targetdir:"coverage-report" `
+                          -reporttypes:MarkdownSummaryGithub
+      - name: Upload coverage report
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage-report
+      - name: Show coverage in summary
+        if: matrix.os == 'ubuntu-latest'
+        shell: pwsh
+        run: |
+          Get-Content coverage-report/SummaryGithub.md | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
