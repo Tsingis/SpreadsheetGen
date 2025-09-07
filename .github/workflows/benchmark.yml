@@ -7,6 +7,11 @@ on:
         required: true
         type: string
         default: "10,100,1000"
+      framework:
+        description: "Target .NET framework"
+        required: true
+        type: string
+        default: "net9.0"
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -14,15 +19,19 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v5
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v5
         with:
-          global-json-file: ./global.json
+          global-json-file: global.json
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "10.0.x"
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
         run: dotnet build -c Release --no-restore
       - name: Benchmark
         run: |
-          dotnet run -c Release --no-restore --no-build --project SpreadsheetGen.Benchmarks -- ${{ inputs.rowCounts }}
+          dotnet run -c Release --no-restore --no-build \
+          --framework ${{ inputs.framework }} \
+          --project SpreadsheetGen.Benchmarks -- ${{ inputs.rowCounts }}
           cat BenchmarkDotNet.Artifacts/results/*-report-github.md >> $GITHUB_STEP_SUMMARY

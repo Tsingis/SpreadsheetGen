@@ -4,7 +4,7 @@
         {
             "label": "benchmark",
             "type": "shell",
-            "command": "dotnet build -c Release && dotnet run -c Release --project SpreadsheetGen.Benchmarks -- 10,100,1000",
+            "command": "dotnet build -c Release && dotnet run --framework net9.0 -c Release --project SpreadsheetGen.Benchmarks -- 10,100,1000",
             "problemMatcher": "$msCompile",
             "group": "build"
         },
