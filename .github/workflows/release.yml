@@ -17,9 +17,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build SpreadsheetGen -c Release --no-restore
+        run: dotnet build -c Release --no-restore
       - name: Pack
-        run: dotnet pack SpreadsheetGen -c Release --no-build -o package
+        run: dotnet pack -c Release --no-build -o package
       - name: Publish
         run: |
           for pkg in package/*.nupkg; do

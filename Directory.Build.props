@@ -22,4 +22,19 @@
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Benchmarks'))">
     <NoWarn>$(NoWarn);CS0649;CA1515;CA1812;CA1051;S1104;CA1024</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Tsingis</Authors>
+    <Version>0.1.5</Version>
+    <Description>Package for quickly creating spreadsheets</Description>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Tsingis/SpreadsheetGen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Tsingis/SpreadsheetGen</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <DebugType>portable</DebugType>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
 </Project>

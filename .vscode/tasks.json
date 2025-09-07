@@ -9,6 +9,13 @@
             "group": "build"
         },
         {
+            "label": "pack",
+            "type": "shell",
+            "command": "dotnet pack -c Release -o package",
+            "problemMatcher": "$msCompile",
+            "group": "build"
+        },
+        {
             "label": "test solution",
             "type": "shell",
             "command": "dotnet test",
