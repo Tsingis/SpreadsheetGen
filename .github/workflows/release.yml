@@ -1,0 +1,28 @@
+name: release
+on:
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "9.0.x"
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build SpreadsheetGen -c Release --no-restore
+      - name: Pack
+        run: dotnet pack SpreadsheetGen -c Release --no-build -o package
+      - name: Publish
+        run: |
+          for pkg in package/*.nupkg; do
+            dotnet nuget push "$pkg" \
+              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --skip-duplicate \
+              --source https://api.nuget.org/v3/index.json
+          done
