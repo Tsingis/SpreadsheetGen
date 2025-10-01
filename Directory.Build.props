@@ -24,7 +24,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <Authors>Tsingis</Authors>
-    <Version>0.1.5</Version>
+    <Version>0.1.7</Version>
+    <PackageTags>spreadsheet;excel;xlsx</PackageTags>
     <Description>Package for quickly creating spreadsheets</Description>
     <PackageIcon>logo.png</PackageIcon>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -32,9 +33,11 @@
     <RepositoryUrl>https://github.com/Tsingis/SpreadsheetGen</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
-    <DebugType>portable</DebugType>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 </Project>
