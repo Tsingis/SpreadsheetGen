@@ -42,23 +42,23 @@ jobs:
           dotnet test -c Release --framework ${{ matrix.framework }} --no-restore --no-build -- \
           --coverage --coverage-output-format xml --coverage-output ${{ github.workspace }}/coverage.xml
       - name: Install Report Generator
-        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net9.0'
+        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net10.0'
         run: dotnet tool install --global dotnet-reportgenerator-globaltool
       - name: Generate coverage report
-        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net9.0'
+        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net10.0'
         shell: pwsh
         run: |
           reportgenerator -reports:"${{ github.workspace }}/**/coverage.xml" `
                           -targetdir:"coverage-report" `
                           -reporttypes:MarkdownSummaryGithub
       - name: Upload coverage report
-        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net9.0'
+        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net10.0'
         uses: actions/upload-artifact@v5
         with:
           name: coverage-report
           path: coverage-report
       - name: Show coverage in summary
-        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net9.0'
+        if: matrix.os == 'ubuntu-latest' && matrix.framework == 'net10.0'
         shell: pwsh
         run: |
           Get-Content coverage-report/SummaryGithub.md | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
