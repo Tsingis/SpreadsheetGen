@@ -16,6 +16,10 @@
     <EnableCodeAnalysis>true</EnableCodeAnalysis>
     <NoWarn>CA2007;S1135</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
     <NoWarn>$(NoWarn);CA1707;CA1812;CA1852;CA1515;CA1711</NoWarn>
   </PropertyGroup>
