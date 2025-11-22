@@ -16,6 +16,6 @@ public class CellComparer : IEqualityComparer<Cell>
 
     public int GetHashCode(Cell obj)
     {
-        return HashCode.Combine(obj?.DataType, obj.CellValue?.Text);
+        return HashCode.Combine(obj?.DataType, obj?.CellValue?.Text);
     }
 }
