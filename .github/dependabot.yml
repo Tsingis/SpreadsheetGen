@@ -16,3 +16,14 @@ updates:
       timezone: "Europe/Helsinki"
     cooldown:
       default-days: 1
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+    schedule:
+      interval: "monthly"
+      day: "wednesday"
+      time: "21:00"
+      timezone: "Europe/Helsinki"
