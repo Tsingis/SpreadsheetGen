@@ -63,6 +63,9 @@ jobs:
         with:
           name: coverage-${{ matrix.os }}-${{ matrix.framework }}
           path: coverage-report-${{ matrix.os }}-${{ matrix.framework }}
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 1
       - name: Show coverage in summary
         shell: pwsh
         run: |
