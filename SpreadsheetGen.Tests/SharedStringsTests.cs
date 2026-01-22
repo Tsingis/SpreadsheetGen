@@ -1,6 +1,6 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using SpreadsheetGen.Enums;
-using Xunit;
+using NUnit.Framework;
 using System.Globalization;
 using SpreadsheetGen.Models;
 
@@ -8,7 +8,7 @@ namespace SpreadsheetGen.Tests;
 
 public class SharedStringsTests
 {
-    [Fact]
+    [Test]
     public void Spreadsheet_ExpectedSharedStringValues()
     {
         (SheetData sheetData, SharedStringTable sharedStringTable) = GetSpreadsheetParts();
@@ -24,7 +24,7 @@ public class SharedStringsTests
 
         string[] expected = ["Text", "Integer", "Decimal", "Date", "Boolean", "Percentage", "DateTime", "Time"];
 
-        Assert.Equal(expected, cellValues);
+        Assert.That(expected, Is.EqualTo(cellValues));
     }
 
     private static (SheetData sheetData, SharedStringTable sharedStringTable) GetSpreadsheetParts()
