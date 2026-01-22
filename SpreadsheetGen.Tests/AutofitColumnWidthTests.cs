@@ -2,13 +2,13 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 using SpreadsheetGen.Enums;
 using SpreadsheetGen.Extensions;
-using Xunit;
+using NUnit.Framework;
 
 namespace SpreadsheetGen.Tests;
 
 public class AutofitColumnWidthTests
 {
-    [Fact]
+    [Test]
     public void AutofitColumnWidth_SetsExpectedWidths()
     {
         var worksheet = new Worksheet(new List<OpenXmlElement> { new SheetData() });
@@ -36,15 +36,15 @@ public class AutofitColumnWidthTests
         var cols = worksheet.Elements<Columns>().FirstOrDefault();
         var colList = cols.Elements<Column>().ToList();
 
-        Assert.True(colList[1].Width > colList[0].Width);
+        Assert.That(colList[1].Width, Is.GreaterThan(colList[0].Width));
     }
 
-    [Fact]
+    [Test]
     public void AutofitColumnWidth_NotCalled()
     {
         var worksheet = new Worksheet(new List<OpenXmlElement> { new SheetData() });
         var cols = worksheet.Elements<Columns>().FirstOrDefault();
 
-        Assert.Null(cols);
+        Assert.That(cols, Is.Null);
     }
 }

@@ -1,26 +1,17 @@
-using System.Collections.ObjectModel;
 using System.IO.Compression;
 using SpreadsheetGen.Enums;
 using SpreadsheetGen.Models;
-using Xunit;
+using NUnit.Framework;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace SpreadsheetGen.Tests;
 
-
-[CollectionDefinition(nameof(PackageContentTestsCollection))]
-public class PackageContentTestsCollection : ICollectionFixture<TestPackageFixture> { }
-
-[Collection(nameof(PackageContentTestsCollection))]
+[NonParallelizable]
 public class PackageContentTests
 {
-    private readonly TestPackageFixture _fixture;
+    private static TestPackageFixture _fixture => PackageSetUpFixture.Fixture;
 
-    public PackageContentTests(TestPackageFixture fixture)
-    {
-        _fixture = fixture;
-    }
-
-    [Fact]
+    [Test]
     public void Package_WithData_Contains_ExpectedFiles()
     {
         using var archive = ZipFile.OpenRead(_fixture.ContentFilePath);
@@ -38,14 +29,14 @@ public class PackageContentTests
             "xl/_rels/workbook.xml.rels",
         ];
 
-        Assert.True(expectedFiles.All(files.Contains));
+        Assert.That(expectedFiles.All(files.Contains));
     }
 
-    [Fact]
+    [Test]
     public async Task Package_WithData_Contains_SharedStringData()
     {
 #if NET10_0
-        await using var archive = await ZipFile.OpenReadAsync(_fixture.ContentFilePath, TestContext.Current.CancellationToken);
+        await using var archive = await ZipFile.OpenReadAsync(_fixture.ContentFilePath, TestContext.CurrentContext.CancellationToken);
 #else
         using var archive = ZipFile.OpenRead(_fixture.ContentFilePath);
 #endif
@@ -54,46 +45,41 @@ public class PackageContentTests
         if (sharedStringsEntry != null)
         {
 #if NET10_0
-            using var sr = new StreamReader(await sharedStringsEntry.OpenAsync(TestContext.Current.CancellationToken));
+            using var sr = new StreamReader(await sharedStringsEntry.OpenAsync(TestContext.CurrentContext.CancellationToken));
 #else
             using var sr = new StreamReader(sharedStringsEntry.Open());
 #endif
-            var sharedXml = await sr.ReadToEndAsync(TestContext.Current.CancellationToken);
+            var sharedXml = await sr.ReadToEndAsync(TestContext.CurrentContext.CancellationToken);
 
-            Assert.Contains("<x:si>", sharedXml, StringComparison.InvariantCulture);
+            Assert.That(sharedXml, Does.Contain("<x:si>"));
         }
     }
 
-    [Fact]
+    [Test]
     public async Task Package_WithData_Contains_SheetData()
     {
 #if NET10_0
-        await using var archive = await ZipFile.OpenReadAsync(_fixture.ContentFilePath, TestContext.Current.CancellationToken);
+        await using var archive = await ZipFile.OpenReadAsync(_fixture.ContentFilePath, TestContext.CurrentContext.CancellationToken);
 #else
         using var archive = ZipFile.OpenRead(_fixture.ContentFilePath);
 #endif
         var firstSheetEntry = archive.Entries
             .FirstOrDefault(x => x.FullName.StartsWith("xl/worksheets/sheet", StringComparison.InvariantCulture));
-
 #if NET10_0
-        using var sr = new StreamReader(await firstSheetEntry.OpenAsync(TestContext.Current.CancellationToken));
+        using var sr = new StreamReader(await firstSheetEntry.OpenAsync(TestContext.CurrentContext.CancellationToken));
 #else
         using var sr = new StreamReader(firstSheetEntry.Open());
 #endif
-        var xmlContent = await sr.ReadToEndAsync(TestContext.Current.CancellationToken);
+        var xmlContent = await sr.ReadToEndAsync(TestContext.CurrentContext.CancellationToken);
 
-        Assert.Contains("<x:sheetData>", xmlContent, StringComparison.InvariantCulture);
+        Assert.That(xmlContent, Does.Contain("<x:sheetData>"));
     }
 
-    [Fact]
-#if NET10_0
+    [Test]
     public async Task Package_NoData_Contains_ExpectedFiles()
-#else
-    public void Package_NoData_Contains_ExpectedFiles()
-#endif
     {
 #if NET10_0
-        await using var archive = await ZipFile.OpenReadAsync(_fixture.NoContentFilePath, TestContext.Current.CancellationToken);
+        await using var archive = await ZipFile.OpenReadAsync(_fixture.NoContentFilePath, TestContext.CurrentContext.CancellationToken);
 #else
         using var archive = ZipFile.OpenRead(_fixture.NoContentFilePath);
 #endif
@@ -107,27 +93,46 @@ public class PackageContentTests
             "xl/_rels/workbook.xml.rels",
         ];
 
-        Assert.True(expectedFiles.All(files.Contains));
+        Assert.That(expectedFiles.All(files.Contains));
     }
 
-    [Fact]
+    [Test]
     public async Task Package_NoData_Contains_NoSheetData()
     {
 #if NET10_0
-        await using var archive = await ZipFile.OpenReadAsync(_fixture.NoContentFilePath, TestContext.Current.CancellationToken);
+        await using var archive = await ZipFile.OpenReadAsync(_fixture.NoContentFilePath, TestContext.CurrentContext.CancellationToken);
 #else
         using var archive = ZipFile.OpenRead(_fixture.NoContentFilePath);
 #endif
         var firstSheetEntry = archive.Entries
             .FirstOrDefault(x => x.FullName.StartsWith("xl/worksheets/sheet", StringComparison.InvariantCulture));
 #if NET10_0
-        using var sr = new StreamReader(await firstSheetEntry.OpenAsync(TestContext.Current.CancellationToken));
+        using var sr = new StreamReader(await firstSheetEntry.OpenAsync(TestContext.CurrentContext.CancellationToken));
 #else
-        using var sr = new StreamReader(firstSheetEntry.Open());
+            using var sr = new StreamReader(firstSheetEntry.Open());
 #endif
-        var xmlContent = await sr.ReadToEndAsync(TestContext.Current.CancellationToken);
+        var xmlContent = await sr.ReadToEndAsync();
 
-        Assert.DoesNotContain("<x:sheetData>", xmlContent, StringComparison.InvariantCulture);
+        Assert.That(xmlContent, Does.Not.Contain("<x:sheetData>"));
+    }
+}
+
+[SetUpFixture]
+[NonParallelizable]
+public class PackageSetUpFixture
+{
+    public static TestPackageFixture Fixture { get; private set; } = null!;
+
+    [OneTimeSetUp]
+    public void GlobalSetUp()
+    {
+        Fixture = new TestPackageFixture();
+    }
+
+    [OneTimeTearDown]
+    public void GlobalTearDown()
+    {
+        Fixture.Dispose();
     }
 }
 

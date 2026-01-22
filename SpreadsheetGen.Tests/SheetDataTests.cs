@@ -1,7 +1,7 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Packaging;
 using System.Globalization;
-using Xunit;
+using NUnit.Framework;
 using SpreadsheetGen.Enums;
 using SpreadsheetGen.Models;
 
@@ -11,17 +11,17 @@ public class SheetDataTests
 {
     private readonly DateTime _OADate = new(1899, 12, 30, 0, 0, 0, DateTimeKind.Utc);
 
-    [Fact]
+    [Test]
     public void Spreadsheet_ExpectedRowCount()
     {
         var sheetData = GetSheetData();
 
         var rows = sheetData.Elements<Row>().ToList();
 
-        Assert.Equal(3, rows.Count);
+        Assert.That(rows, Has.Count.EqualTo(3));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_ExpectedColumnCount()
     {
         var sheetData = GetSheetData();
@@ -29,10 +29,10 @@ public class SheetDataTests
         var row = sheetData.Elements<Row>().First();
         var cells = row.Elements<Cell>().ToList();
 
-        Assert.Equal(8, cells.Count);
+        Assert.That(cells, Has.Count.EqualTo(8));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_HeaderRow_HasExpectedSharedStringIndices()
     {
         var sheetData = GetSheetData();
@@ -42,10 +42,10 @@ public class SheetDataTests
 
         var expected = Enumerable.Range(0, 8).ToList();
 
-        Assert.Equal(expected, stringIndices);
+        Assert.That(stringIndices, Is.EqualTo(expected));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_FirstCell_HasExpectedSharedStringIndex()
     {
         var sheetData = GetSheetData();
@@ -54,32 +54,34 @@ public class SheetDataTests
         var cell = row.Elements<Cell>().ElementAt(0);
         var stringIndex = int.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
 
-        Assert.Equal(8, stringIndex);
+        Assert.That(stringIndex, Is.EqualTo(8));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_SecondCell_HasNumber()
     {
         var sheetData = GetSheetData();
 
         var row = sheetData.Elements<Row>().ElementAt(1);
         var cell = row.Elements<Cell>().ElementAt(1);
+        var value = int.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
 
-        Assert.Equal(1, int.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture));
+        Assert.That(value, Is.EqualTo(1));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_ThirdCell_HasDecimal()
     {
         var sheetData = GetSheetData();
 
         var row = sheetData.Elements<Row>().ElementAt(1);
         var cell = row.Elements<Cell>().ElementAt(2);
+        var value = decimal.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
 
-        Assert.Equal(50_000.01m, decimal.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture));
+        Assert.That(value, Is.EqualTo(50_000.01m));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_FourthCell_HasDateTime()
     {
         var sheetData = GetSheetData();
@@ -89,32 +91,34 @@ public class SheetDataTests
         var expected = new DateTime(2020, 1, 15, 0, 0, 0, DateTimeKind.Utc);
         var actual = _OADate.AddDays(int.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture));
 
-        Assert.Equal(expected, actual);
+        Assert.That(actual, Is.EqualTo(expected));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_FifthCell_HasBoolean()
     {
         var sheetData = GetSheetData();
 
         var row = sheetData.Elements<Row>().ElementAt(1);
         var cell = row.Elements<Cell>().ElementAt(4);
+        var value = bool.Parse(cell.CellValue.Text);
 
-        Assert.True(bool.Parse(cell.CellValue.Text));
+        Assert.That(value);
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_SixthCell_HasPercentage()
     {
         var sheetData = GetSheetData();
 
         var row = sheetData.Elements<Row>().ElementAt(1);
         var cell = row.Elements<Cell>().ElementAt(5);
+        var value = decimal.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
 
-        Assert.Equal(1.2345m, decimal.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture));
+        Assert.That(value, Is.EqualTo(1.2345m));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_SeventhCell_HasDateTime()
     {
         var sheetData = GetSheetData();
@@ -124,10 +128,10 @@ public class SheetDataTests
         var expected = new DateTime(2020, 12, 24, 23, 59, 59, DateTimeKind.Utc);
         var actual = _OADate.AddDays(double.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture));
 
-        Assert.Equal(expected, actual, precision: TimeSpan.FromMicroseconds(1));
+        Assert.That(expected, Is.EqualTo(actual).Within(TimeSpan.FromMicroseconds(1)));
     }
 
-    [Fact]
+    [Test]
     public void Spreadsheet_FirstDataRow_EighthCell_HasTime()
     {
         var sheetData = GetSheetData();
@@ -138,7 +142,7 @@ public class SheetDataTests
         var expected = new TimeOnly(12, 15, 22);
         var actual = TimeOnly.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
 
-        Assert.Equal(expected, actual);
+        Assert.That(actual, Is.EqualTo(expected));
     }
 
     private static SheetData GetSheetData()
