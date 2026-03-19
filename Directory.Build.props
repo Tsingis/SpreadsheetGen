@@ -14,7 +14,7 @@
     <EnforeCodeStyleInBuild>true</EnforeCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnableCodeAnalysis>true</EnableCodeAnalysis>
-    <NoWarn>CA2007;S1135</NoWarn>
+    <NoWarn>CA2007;S125;S1135</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
