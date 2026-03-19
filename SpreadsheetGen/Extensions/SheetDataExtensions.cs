@@ -79,7 +79,8 @@ internal static class SheetDataPartExtensions
 
             if (!column.TotalType.HasValue)
             {
-                row.AppendChild(new Cell());
+                var emptyCell = new Cell { StyleIndex = (uint)(col + 2) };
+                row.AppendChild(emptyCell);
                 continue;
             }
 
@@ -94,12 +95,13 @@ internal static class SheetDataPartExtensions
 
             if (func == null)
             {
-                row.AppendChild(new Cell());
+                var emptyCell = new Cell { StyleIndex = (uint)(col + 2) };
+                row.AppendChild(emptyCell);
                 continue;
             }
 
             var formula = $"{func}({colLetter}{firstDataRow}:{colLetter}{lastDataRow})";
-            var cell = new Cell { CellFormula = new CellFormula(formula) };
+            var cell = new Cell { CellFormula = new CellFormula(formula), StyleIndex = (uint)(col + 2) };
             row.AppendChild(cell);
         }
 

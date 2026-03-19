@@ -6,10 +6,10 @@ namespace SpreadsheetGen.Extensions;
 
 internal static class WorksheetPartExtensions
 {
-    internal static void AddTable(this WorksheetPart worksheetPart, int rowCount, List<string> headers, bool totalsShown = false)
+    internal static void AddTable(this WorksheetPart worksheetPart, int rowCount, List<string> headers, bool includeTotalsColumn = false)
     {
-        var tableStartIndex = totalsShown ? 2 : 1; // 1-based column index where table starts
-        var tableColumnCount = totalsShown ? headers.Count - 1 : headers.Count;
+        var tableStartIndex = includeTotalsColumn ? 2 : 1; // 1-based column index where table starts
+        var tableColumnCount = includeTotalsColumn ? headers.Count - 1 : headers.Count;
 
         var startCell = $"{GetColumnName(tableStartIndex)}1";
         var endCell = $"{GetColumnName(tableStartIndex + tableColumnCount - 1)}{rowCount}";
@@ -22,12 +22,12 @@ internal static class WorksheetPartExtensions
             Name = "Table1",
             DisplayName = "Table1",
             Reference = tableRange,
-            TotalsRowShown = totalsShown,
+            TotalsRowShown = false,
             AutoFilter = new AutoFilter { Reference = tableRange },
             TableColumns = new TableColumns { Count = (uint)tableColumnCount }
         };
 
-        var headerStart = totalsShown ? 1 : 0;
+        var headerStart = includeTotalsColumn ? 1 : 0;
         for (uint i = 0; i < tableColumnCount; i++)
         {
             tableDefPart.Table.TableColumns.AppendChild(new TableColumn

@@ -81,7 +81,7 @@ public static class SpreadsheetGenerator
                 sheetData.CreateTotalsRow(data, sharedStringDict, sharedStringList);
             }
 
-            var totalRows = data.Rows.Count + 1 + (totalsShown ? 1 : 0);
+            var tableRowCount = data.Rows.Count + 1;
             var headers = totalsShown ? new List<string> { string.Empty } : [];
 
             if (totalsShown)
@@ -93,7 +93,8 @@ public static class SpreadsheetGenerator
                 headers = data.Columns.Select(x => x.Name).ToList();
             }
 
-            worksheetPart.AddTable(totalRows, headers, totalsShown);
+            // includeTotalsColumn = totalsShown ; totalsRowShown = false so totals row remains outside the table
+            worksheetPart.AddTable(tableRowCount, headers, includeTotalsColumn: totalsShown);
         }
 
         if (sharedStringList.Count > 0)
