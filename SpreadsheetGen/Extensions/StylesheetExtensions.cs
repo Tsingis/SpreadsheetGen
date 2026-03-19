@@ -66,6 +66,12 @@ internal static class StylesheetExtensions
                 ApplyNumberFormat = numberFormatId != 0
             };
 
+            if (i == 0 && string.IsNullOrEmpty(columns.ElementAt(i).Name))
+            {
+                cellFormat.Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right };
+                cellFormat.ApplyAlignment = true;
+            }
+
             cellFormats.AppendChild(cellFormat);
         }
 

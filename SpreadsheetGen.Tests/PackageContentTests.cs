@@ -150,12 +150,12 @@ public class TestPackageFixture : IDisposable
 
         List<Column> columns =
         [
-            new() { Name = "Text", Type = ColumnType.Text },
-            new() { Name = "Integer", Type = ColumnType.Integer },
-            new() { Name = "Decimal", Type = ColumnType.Decimal },
+            new() { Name = "Text", Type = ColumnType.Text, TotalType = TotalType.Count },
+            new() { Name = "Integer", Type = ColumnType.Integer, TotalType = TotalType.Sum },
+            new() { Name = "Decimal", Type = ColumnType.Decimal, TotalType = TotalType.Average },
             new() { Name = "Date", Type = ColumnType.Date },
             new() { Name = "Boolean", Type = ColumnType.Boolean },
-            new() { Name = "Percentage", Type = ColumnType.Percentage },
+            new() { Name = "Percentage", Type = ColumnType.Percentage, TotalType = TotalType.Average },
             new() { Name = "DateTime", Type = ColumnType.DateTime },
             new() { Name = "Time", Type = ColumnType.Time },
         ];

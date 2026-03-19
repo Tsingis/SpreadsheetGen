@@ -1,6 +1,7 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using SpreadsheetGen.Enums;
 using SpreadsheetGen.Extensions;
 using SpreadsheetGen.Models;
 
@@ -44,14 +45,55 @@ public static class SpreadsheetGenerator
 
         if (data.Columns?.Count > 0)
         {
-            workbookPart.AddStyles(data.Columns);
-            worksheetPart.Worksheet.AutoFitColumnWidths(data.Columns, data.Rows);
+            var totalsShown = data.Columns.Any(c => c.TotalType.HasValue);
+
+            if (totalsShown)
+            {
+                var effectiveColumns = new List<Models.Column> { new() { Name = string.Empty, Type = ColumnType.Text } };
+                effectiveColumns.AddRange(data.Columns);
+
+                var effectiveRows = data.Rows.Select(r =>
+                {
+                    var arr = new object[data.Columns.Count + 1];
+                    arr[0] = string.Empty;
+                    for (var i = 0; i < data.Columns.Count; i++)
+                    {
+                        arr[i + 1] = r[i];
+                    }
+                    return arr;
+                }).ToList();
+
+                workbookPart.AddStyles(effectiveColumns);
+                worksheetPart.Worksheet.AutoFitColumnWidths(effectiveColumns, effectiveRows);
+            }
+            else
+            {
+                workbookPart.AddStyles(data.Columns);
+                worksheetPart.Worksheet.AutoFitColumnWidths(data.Columns, data.Rows);
+            }
 
             var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
-            sheetData.CreateHeaderRow(data.Columns, sharedStringDict, sharedStringList);
-            sheetData.CreateDataRows(data, sharedStringDict, sharedStringList);
+            sheetData.CreateHeaderRow(data.Columns, sharedStringDict, sharedStringList, totalsShown);
+            sheetData.CreateDataRows(data, sharedStringDict, sharedStringList, totalsShown);
 
-            worksheetPart.AddTable(data.Rows.Count + 1, data.Columns.Select(x => x.Name).ToList());
+            if (totalsShown)
+            {
+                sheetData.CreateTotalsRow(data, sharedStringDict, sharedStringList);
+            }
+
+            var totalRows = data.Rows.Count + 1 + (totalsShown ? 1 : 0);
+            var headers = totalsShown ? new List<string> { string.Empty } : [];
+
+            if (totalsShown)
+            {
+                headers.AddRange(data.Columns.Select(x => x.Name));
+            }
+            else
+            {
+                headers = data.Columns.Select(x => x.Name).ToList();
+            }
+
+            worksheetPart.AddTable(totalRows, headers, totalsShown);
         }
 
         if (sharedStringList.Count > 0)

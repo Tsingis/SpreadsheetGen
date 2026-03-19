@@ -6,10 +6,13 @@ namespace SpreadsheetGen.Extensions;
 
 internal static class WorksheetPartExtensions
 {
-    internal static void AddTable(this WorksheetPart worksheetPart, int rowCount, List<string> headers)
+    internal static void AddTable(this WorksheetPart worksheetPart, int rowCount, List<string> headers, bool totalsShown = false)
     {
-        const string startCell = "A1";
-        var endCell = $"{GetColumnName(headers.Count)}{rowCount}";
+        var tableStartIndex = totalsShown ? 2 : 1; // 1-based column index where table starts
+        var tableColumnCount = totalsShown ? headers.Count - 1 : headers.Count;
+
+        var startCell = $"{GetColumnName(tableStartIndex)}1";
+        var endCell = $"{GetColumnName(tableStartIndex + tableColumnCount - 1)}{rowCount}";
         var tableRange = $"{startCell}:{endCell}";
 
         var tableDefPart = worksheetPart.AddNewPart<TableDefinitionPart>();
@@ -19,17 +22,18 @@ internal static class WorksheetPartExtensions
             Name = "Table1",
             DisplayName = "Table1",
             Reference = tableRange,
-            TotalsRowShown = false,
+            TotalsRowShown = totalsShown,
             AutoFilter = new AutoFilter { Reference = tableRange },
-            TableColumns = new TableColumns { Count = (uint)headers.Count }
+            TableColumns = new TableColumns { Count = (uint)tableColumnCount }
         };
 
-        for (uint i = 0; i < headers.Count; i++)
+        var headerStart = totalsShown ? 1 : 0;
+        for (uint i = 0; i < tableColumnCount; i++)
         {
             tableDefPart.Table.TableColumns.AppendChild(new TableColumn
             {
                 Id = i + 1,
-                Name = headers[(int)i]
+                Name = headers[headerStart + (int)i]
             });
         }
 
