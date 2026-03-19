@@ -140,7 +140,9 @@ public class SheetDataTests
         var cell = row.Elements<Cell>().ElementAt(7);
 
         var expected = new TimeOnly(12, 15, 22);
-        var actual = TimeOnly.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
+        var fraction = decimal.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture);
+        var ticks = (long)decimal.Round(fraction * TimeSpan.TicksPerDay, 0);
+        var actual = TimeOnly.FromTimeSpan(TimeSpan.FromTicks(ticks));
 
         Assert.That(actual, Is.EqualTo(expected));
     }

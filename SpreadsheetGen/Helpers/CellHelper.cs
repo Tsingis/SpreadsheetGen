@@ -137,16 +137,29 @@ internal static class CellHelper
         return cell;
     }
 
-    //TODO: Format as time
+    /// <summary>
+    /// Time values are stored as a fraction of a 24-hour dayed
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
     private static Cell CreateTimeCell(object value)
     {
-        var cellValue = value == null
-            ? string.Empty
-            : ((TimeOnly)value).ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+        if (value == null)
+        {
+            return new Cell
+            {
+                DataType = null,
+                CellValue = new CellValue(string.Empty)
+            };
+        }
+
+        var time = (TimeOnly)value;
+        var fractionOfDay = (decimal)time.ToTimeSpan().TotalSeconds / 86400m;
+        var cellValue = fractionOfDay.ToString(CultureInfo.InvariantCulture);
 
         var cell = new Cell()
         {
-            DataType = CellValues.String,
+            DataType = null,
             CellValue = new CellValue(cellValue)
         };
 

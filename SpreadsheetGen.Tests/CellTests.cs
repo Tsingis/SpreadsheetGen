@@ -56,6 +56,7 @@ public class CellTests
     private static readonly DateTime _OADate = new(1899, 12, 30, 0, 0, 0, DateTimeKind.Utc);
     private static readonly DateTime _testDateTime = new(2020, 12, 24, 23, 59, 59, DateTimeKind.Utc);
     private static readonly DateOnly _testDateOnly = new(2020, 12, 24);
+    private static readonly TimeOnly _testTime = new TimeOnly(14, 30, 5);
 
     public static IEnumerable<TestCaseData> CellTestCases
     {
@@ -68,7 +69,8 @@ public class CellTests
             yield return new TestCaseData(_testDateOnly, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((_testDateOnly.ToDateTime(TimeOnly.MinValue) - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
             yield return new TestCaseData(_testDateTime, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((_testDateTime - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
             yield return new TestCaseData(_testDateTime, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((_testDateTime - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
-            yield return new TestCaseData(new TimeOnly(14, 30, 5), ColumnType.Time, new Cell { DataType = CellValues.String, CellValue = new CellValue("14:30:05") });
+            var _testTimeFraction = ((decimal)_testTime.ToTimeSpan().TotalSeconds / 86400m).ToString(CultureInfo.InvariantCulture);
+            yield return new TestCaseData(_testTime, ColumnType.Time, new Cell { DataType = null, CellValue = new CellValue(_testTimeFraction) });
             yield return new TestCaseData(true, ColumnType.Boolean, new Cell { DataType = CellValues.Boolean, CellValue = new CellValue(true) });
             yield return new TestCaseData(false, ColumnType.Boolean, new Cell { DataType = CellValues.Boolean, CellValue = new CellValue(false) });
         }
