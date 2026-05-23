@@ -17,9 +17,12 @@
     <NoWarn>CA2007;S125;S1135</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.26.0.140279" />
+  </ItemGroup>
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
     <NoWarn>$(NoWarn);CA1707;CA1812;CA1852;CA1515;CA1711</NoWarn>
   </PropertyGroup>
