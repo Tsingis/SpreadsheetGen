@@ -11,27 +11,52 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        if (args?.Length > 0)
-        {
-            var parts = args[0].Split(',', StringSplitOptions.RemoveEmptyEntries);
-            foreach (var part in parts)
-            {
-                if (int.TryParse(part, out var count))
-                {
-                    RowCounts.Add(count);
-                }
-            }
-        }
-
-        if (RowCounts.Count == 0)
-        {
-            s_defaultRowCounts.ToList().ForEach(RowCounts.Add);
-        }
+        var benchmarkArgs = ParseArguments(args ?? []);
 
         var config = ManualConfig
             .Create(DefaultConfig.Instance)
             .HideColumns(Column.StdDev, Column.Median, Column.Error);
 
-        BenchmarkRunner.Run<Benchmark>(config);
+        BenchmarkSwitcher
+            .FromAssembly(typeof(Program).Assembly)
+            .Run(benchmarkArgs, config);
+    }
+
+    private static string[] ParseArguments(string[] args)
+    {
+        var benchmarkArgs = new List<string>();
+        var rowCounts = new List<int>();
+
+        for (var index = 0; index < args.Length; index++)
+        {
+            var arg = args[index];
+
+            if (arg.Equals("--row-counts", StringComparison.OrdinalIgnoreCase) && index + 1 < args.Length)
+            {
+                rowCounts.AddRange(ParseRowCounts(args[index + 1]));
+                continue;
+            }
+
+            benchmarkArgs.Add(arg);
+        }
+
+        RowCounts.Clear();
+
+        var selectedRowCounts = rowCounts.Count == 0 ? s_defaultRowCounts.ToList() : rowCounts;
+
+        foreach (var rowCount in selectedRowCounts)
+        {
+            RowCounts.Add(rowCount);
+        }
+
+        return benchmarkArgs.ToArray();
+    }
+
+    private static IEnumerable<int> ParseRowCounts(string value)
+    {
+        return value
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(part => int.TryParse(part, out var count) ? count : 0)
+            .Where(count => count > 0);
     }
 }
