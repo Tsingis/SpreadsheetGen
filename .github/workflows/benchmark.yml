@@ -3,15 +3,20 @@ on:
   workflow_dispatch:
     inputs:
       rowCounts:
-        description: "Number of rows separated with comma"
+        description: "Row counts separated with space"
         required: true
         type: string
-        default: "10,100,1000"
+        default: "10 100 1000"
       framework:
-        description: "Target .NET framework"
+        description: "Target framework"
         required: true
         type: string
         default: "net10.0"
+      runtimes:
+        description: "Target runtimes separated with space"
+        required: true
+        type: string
+        default: "net9.0 net10.0 net11.0"
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -33,5 +38,9 @@ jobs:
         run: |
           dotnet run -c Release --no-restore --no-build \
           --framework ${{ inputs.framework }} \
-          --project SpreadsheetGen.Benchmarks -- ${{ inputs.rowCounts }}
-          cat BenchmarkDotNet.Artifacts/results/*-report-github.md >> $GITHUB_STEP_SUMMARY
+          --project SpreadsheetGen.Benchmarks -- \
+          --filter "*" \
+          --row-counts "${{ inputs.rowCounts }}" \
+          --runtimes ${{ inputs.runtimes }}
+      - name: Publish benchmark summary
+        run: cat BenchmarkDotNet.Artifacts/results/*-report-github.md >> "$GITHUB_STEP_SUMMARY"

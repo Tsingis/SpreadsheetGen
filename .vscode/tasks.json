@@ -1,10 +1,49 @@
 {
     "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "framework",
+            "type": "pickString",
+            "description": "Target framework",
+            "default": "net10.0",
+            "options": [
+                "net9.0",
+                "net10.0",
+                "net11.0"
+            ]
+        },
+        {
+            "id": "rowCounts",
+            "type": "promptString",
+            "description": "Row counts separated with space",
+            "default": "10 100 1000"
+        },
+        {
+            "id": "runtimes",
+            "type": "pickString",
+            "description": "Target runtimes separated with space",
+            "default": "net9.0 net10.0 net11.0",
+            "options": [
+                "net9.0",
+                "net9.0 net10.0",
+                "net9.0 net10.0 net11.0",
+                "net10.0",
+                "net10.0 net11.0",
+                "net11.0"
+            ]
+        }
+    ],
     "tasks": [
         {
             "label": "benchmark",
             "type": "shell",
-            "command": "dotnet build -c Release && dotnet run --framework net10.0 -c Release --project SpreadsheetGen.Benchmarks -- 10,100,1000",
+            "command": [
+                "dotnet build -c Release &&",
+                "dotnet run -f ${input:framework} -c Release --project SpreadsheetGen.Benchmarks --",
+                "--filter \"*\"",
+                "--row-counts \"${input:rowCounts}\"",
+                "--runtimes ${input:runtimes}"
+            ],
             "problemMatcher": "$msCompile",
             "group": "build"
         },
