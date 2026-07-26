@@ -121,7 +121,7 @@ public class PackageContentTests
 [NonParallelizable]
 public class PackageSetUpFixture
 {
-    public static TestPackageFixture Fixture { get; private set; } = null!;
+    public static TestPackageFixture Fixture { get; private set; }
 
     [OneTimeSetUp]
     public void GlobalSetUp()
