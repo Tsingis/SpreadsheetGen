@@ -13,13 +13,17 @@ updates:
           - "github/codeql-action/*"
   - package-ecosystem: "nuget"
     directory: "/"
+    allow:
+      - dependency-type: "all"
+    cooldown:
+      default-days: 1
+      exclude:
+        - "Microsoft.*"
     schedule:
       interval: "weekly"
       day: "sunday"
       time: "21:00"
       timezone: "Europe/Helsinki"
-    cooldown:
-      default-days: 1
   - package-ecosystem: "dotnet-sdk"
     directory: "/"
     cooldown:
