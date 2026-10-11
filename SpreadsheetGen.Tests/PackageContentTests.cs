@@ -35,20 +35,12 @@ public class PackageContentTests
     [Test]
     public async Task Package_WithData_Contains_SharedStringData()
     {
-#if NET9_0
-        using var archive = ZipFile.OpenRead(_fixture.ContentFilePath);
-#else
         await using var archive = await ZipFile.OpenReadAsync(_fixture.ContentFilePath, TestContext.CurrentContext.CancellationToken);
-#endif
         var sharedStringsEntry = archive.Entries
             .FirstOrDefault(x => x.FullName.Equals("xl/sharedStrings.xml", StringComparison.Ordinal));
         if (sharedStringsEntry != null)
         {
-#if NET9_0
-            using var sr = new StreamReader(sharedStringsEntry.Open());
-#else
             using var sr = new StreamReader(await sharedStringsEntry.OpenAsync(TestContext.CurrentContext.CancellationToken));
-#endif
             var sharedXml = await sr.ReadToEndAsync(TestContext.CurrentContext.CancellationToken);
 
             Assert.That(sharedXml, Does.Contain("<x:si>"));
@@ -58,18 +50,10 @@ public class PackageContentTests
     [Test]
     public async Task Package_WithData_Contains_SheetData()
     {
-#if NET9_0
-        using var archive = ZipFile.OpenRead(_fixture.ContentFilePath);
-#else
         await using var archive = await ZipFile.OpenReadAsync(_fixture.ContentFilePath, TestContext.CurrentContext.CancellationToken);
-#endif
         var firstSheetEntry = archive.Entries
             .FirstOrDefault(x => x.FullName.StartsWith("xl/worksheets/sheet", StringComparison.InvariantCulture));
-#if NET9_0
-        using var sr = new StreamReader(firstSheetEntry.Open());
-#else
         using var sr = new StreamReader(await firstSheetEntry.OpenAsync(TestContext.CurrentContext.CancellationToken));
-#endif
         var xmlContent = await sr.ReadToEndAsync(TestContext.CurrentContext.CancellationToken);
 
         Assert.That(xmlContent, Does.Contain("<x:sheetData>"));
@@ -78,11 +62,7 @@ public class PackageContentTests
     [Test]
     public async Task Package_NoData_Contains_ExpectedFiles()
     {
-#if NET9_0
-        using var archive = ZipFile.OpenRead(_fixture.NoContentFilePath);
-#else
         await using var archive = await ZipFile.OpenReadAsync(_fixture.NoContentFilePath, TestContext.CurrentContext.CancellationToken);
-#endif
         var files = archive.Entries.Select(x => x.FullName).ToHashSet();
 
         string[] expectedFiles =
@@ -99,18 +79,10 @@ public class PackageContentTests
     [Test]
     public async Task Package_NoData_Contains_NoSheetData()
     {
-#if NET9_0
-        using var archive = ZipFile.OpenRead(_fixture.NoContentFilePath);
-#else
         await using var archive = await ZipFile.OpenReadAsync(_fixture.NoContentFilePath, TestContext.CurrentContext.CancellationToken);
-#endif
         var firstSheetEntry = archive.Entries
             .FirstOrDefault(x => x.FullName.StartsWith("xl/worksheets/sheet", StringComparison.InvariantCulture));
-#if NET9_0
-        using var sr = new StreamReader(firstSheetEntry.Open());
-#else
         using var sr = new StreamReader(await firstSheetEntry.OpenAsync(TestContext.CurrentContext.CancellationToken));
-#endif
         var xmlContent = await sr.ReadToEndAsync();
 
         Assert.That(xmlContent, Does.Not.Contain("<x:sheetData>"));
