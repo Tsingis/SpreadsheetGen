@@ -1,8 +1,7 @@
 using System.IO.Compression;
+using NUnit.Framework;
 using SpreadsheetGen.Enums;
 using SpreadsheetGen.Models;
-using NUnit.Framework;
-using DocumentFormat.OpenXml.Bibliography;
 
 namespace SpreadsheetGen.Tests;
 

@@ -42,14 +42,14 @@ public static class Program
 
         RowCounts.Clear();
 
-        var selectedRowCounts = rowCounts.Count == 0 ? s_defaultRowCounts.ToList() : rowCounts;
+        var selectedRowCounts = rowCounts.Count == 0 ? [.. s_defaultRowCounts] : rowCounts;
 
         foreach (var rowCount in selectedRowCounts)
         {
             RowCounts.Add(rowCount);
         }
 
-        return benchmarkArgs.ToArray();
+        return [.. benchmarkArgs];
     }
 
     private static IEnumerable<int> ParseRowCounts(string value)

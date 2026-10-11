@@ -1,7 +1,7 @@
-using DocumentFormat.OpenXml.Spreadsheet;
-using SpreadsheetGen.Enums;
-using NUnit.Framework;
 using System.Globalization;
+using DocumentFormat.OpenXml.Spreadsheet;
+using NUnit.Framework;
+using SpreadsheetGen.Enums;
 using SpreadsheetGen.Models;
 
 namespace SpreadsheetGen.Tests;

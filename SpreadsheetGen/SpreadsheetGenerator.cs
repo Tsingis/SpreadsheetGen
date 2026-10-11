@@ -90,7 +90,7 @@ public static class SpreadsheetGenerator
             }
             else
             {
-                headers = data.Columns.Select(x => x.Name).ToList();
+                headers = [.. data.Columns.Select(x => x.Name)];
             }
 
             // includeTotalsColumn = totalsShown ; totalsRowShown = false so totals row remains outside the table

@@ -11,10 +11,11 @@
     <AnalysisMode>all</AnalysisMode>
     <AnalysisLevel>latest</AnalysisLevel>
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-    <EnforeCodeStyleInBuild>true</EnforeCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnableCodeAnalysis>true</EnableCodeAnalysis>
-    <NoWarn>CA2007;S125;S1135</NoWarn>
+    <NoWarn>CA2007;S125;S1135;S3776;IDE0058;IDE1006;CS1591</NoWarn>
     <WarningsNotAsErrors>NU1903</WarningsNotAsErrors>
   </PropertyGroup>
   <PropertyGroup>

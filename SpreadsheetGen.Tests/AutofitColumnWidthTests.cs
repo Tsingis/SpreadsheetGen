@@ -1,8 +1,8 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
+using NUnit.Framework;
 using SpreadsheetGen.Enums;
 using SpreadsheetGen.Extensions;
-using NUnit.Framework;
 
 namespace SpreadsheetGen.Tests;
 

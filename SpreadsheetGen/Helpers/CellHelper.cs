@@ -10,6 +10,8 @@ internal static class CellHelper
     {
         var cell = columnType switch
         {
+            ColumnType.Text => throw new NotSupportedException(
+                $"{nameof(columnType)}: '{columnType}' must be written using the shared string table"),
             ColumnType.Integer => CreateIntegerCell(value),
             ColumnType.Decimal => CreateDecimalCell(value),
             ColumnType.Percentage => CreatePercentageCell(value),

@@ -1,9 +1,9 @@
 using System.Globalization;
 using DocumentFormat.OpenXml.Spreadsheet;
+using NUnit.Framework;
 using SpreadsheetGen.Comparers;
 using SpreadsheetGen.Enums;
 using SpreadsheetGen.Helpers;
-using NUnit.Framework;
 
 namespace SpreadsheetGen.Tests;
 
@@ -53,10 +53,10 @@ public class CellTests
     }
 
     // Date values in excel are index based on OLE Automation date unless formatted
-    private static readonly DateTime _OADate = new(1899, 12, 30, 0, 0, 0, DateTimeKind.Utc);
-    private static readonly DateTime _testDateTime = new(2020, 12, 24, 23, 59, 59, DateTimeKind.Utc);
-    private static readonly DateOnly _testDateOnly = new(2020, 12, 24);
-    private static readonly TimeOnly _testTime = new TimeOnly(14, 30, 5);
+    private static readonly DateTime s_OADate = new(1899, 12, 30, 0, 0, 0, DateTimeKind.Utc);
+    private static readonly DateTime s_testDateTime = new(2020, 12, 24, 23, 59, 59, DateTimeKind.Utc);
+    private static readonly DateOnly s_testDateOnly = new(2020, 12, 24);
+    private static readonly TimeOnly s_testTime = new(14, 30, 5);
 
     public static IEnumerable<TestCaseData> CellTestCases
     {
@@ -65,12 +65,12 @@ public class CellTests
             yield return new TestCaseData(123, ColumnType.Integer, new Cell { DataType = CellValues.Number, CellValue = new CellValue("123") });
             yield return new TestCaseData(1_000.15m, ColumnType.Decimal, new Cell { DataType = CellValues.Number, CellValue = new CellValue("1000.15") });
             yield return new TestCaseData(0.25m, ColumnType.Percentage, new Cell { DataType = CellValues.Number, CellValue = new CellValue("0.25") });
-            yield return new TestCaseData(_testDateTime, ColumnType.DateTime, new Cell { DataType = null, CellValue = new CellValue((_testDateTime - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
-            yield return new TestCaseData(_testDateOnly, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((_testDateOnly.ToDateTime(TimeOnly.MinValue) - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
-            yield return new TestCaseData(_testDateTime, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((_testDateTime - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
-            yield return new TestCaseData(_testDateTime, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((_testDateTime - _OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
-            var _testTimeFraction = ((decimal)_testTime.ToTimeSpan().TotalSeconds / 86400m).ToString(CultureInfo.InvariantCulture);
-            yield return new TestCaseData(_testTime, ColumnType.Time, new Cell { DataType = null, CellValue = new CellValue(_testTimeFraction) });
+            yield return new TestCaseData(s_testDateTime, ColumnType.DateTime, new Cell { DataType = null, CellValue = new CellValue((s_testDateTime - s_OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
+            yield return new TestCaseData(s_testDateOnly, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((s_testDateOnly.ToDateTime(TimeOnly.MinValue) - s_OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
+            yield return new TestCaseData(s_testDateTime, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((s_testDateTime - s_OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
+            yield return new TestCaseData(s_testDateTime, ColumnType.Date, new Cell { DataType = null, CellValue = new CellValue((s_testDateTime - s_OADate).TotalDays.ToString(CultureInfo.InvariantCulture)) });
+            var _testTimeFraction = ((decimal)s_testTime.ToTimeSpan().TotalSeconds / 86400m).ToString(CultureInfo.InvariantCulture);
+            yield return new TestCaseData(s_testTime, ColumnType.Time, new Cell { DataType = null, CellValue = new CellValue(_testTimeFraction) });
             yield return new TestCaseData(true, ColumnType.Boolean, new Cell { DataType = CellValues.Boolean, CellValue = new CellValue(true) });
             yield return new TestCaseData(false, ColumnType.Boolean, new Cell { DataType = CellValues.Boolean, CellValue = new CellValue(false) });
         }

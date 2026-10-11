@@ -18,7 +18,7 @@ internal static class WorksheetExtensions
                     maxLen = value.Length;
                 }
             }
-            var width = Math.Max(8, maxLen * 0.9 + 2);
+            var width = Math.Max(8, (maxLen * 0.9) + 2);
             var column = new Column()
             {
                 Min = (uint)(i + 1),

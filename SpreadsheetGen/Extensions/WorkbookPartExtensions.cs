@@ -1,7 +1,5 @@
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using SpreadsheetGen.Enums;
 
 namespace SpreadsheetGen.Extensions;
 

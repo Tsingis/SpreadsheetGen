@@ -107,6 +107,7 @@ internal static class StylesheetExtensions
             ColumnType.DateTime => 22,
             ColumnType.Date => 14,
             ColumnType.Time => 21,
+            ColumnType.Text or ColumnType.Boolean => 0,
             _ => 0
         };
     }
