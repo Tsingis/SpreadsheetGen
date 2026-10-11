@@ -27,9 +27,36 @@ public class SharedStringsTests
         Assert.That(expected, Is.EqualTo(cellValues));
     }
 
-    private static (SheetData sheetData, SharedStringTable sharedStringTable) GetSpreadsheetParts()
+    [Test]
+    public void Spreadsheet_TextColumnValues_AreStoredAsSharedStrings()
     {
-        List<Models.Column> columns =
+        (SheetData sheetData, SharedStringTable sharedStringTable) = GetSpreadsheetParts(
+            [new() { Name = "Text", Type = ColumnType.Text }],
+            ["repeat"],
+            ["repeat"],
+            [null]);
+
+        var dataCells = sheetData.Elements<Row>()
+            .Skip(1)
+            .SelectMany(row => row.Elements<Cell>())
+            .ToArray();
+        var resolvedValues = dataCells
+            .Select(cell => sharedStringTable.ElementAt(int.Parse(cell.CellValue.Text, CultureInfo.InvariantCulture)).InnerText)
+            .ToArray();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(dataCells.Select(cell => cell.DataType), Is.All.EqualTo(CellValues.SharedString));
+            Assert.That(resolvedValues, Is.EqualTo(["repeat", "repeat", string.Empty]));
+            Assert.That(sharedStringTable.Elements<SharedStringItem>().Count(item => item.InnerText == "repeat"), Is.EqualTo(1));
+        }
+    }
+
+    private static (SheetData sheetData, SharedStringTable sharedStringTable) GetSpreadsheetParts(
+        IReadOnlyCollection<Models.Column> columns = null,
+        params object[][] rows)
+    {
+        columns ??=
         [
             new() { Name = "Text", Type = ColumnType.Text },
             new() { Name = "Integer", Type = ColumnType.Integer },
@@ -44,7 +71,7 @@ public class SharedStringsTests
         var data = new WorksheetData()
         {
             Columns = columns,
-            Rows = [],
+            Rows = rows,
         };
 
         using var ms = new MemoryStream();

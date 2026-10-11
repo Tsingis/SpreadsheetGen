@@ -36,6 +36,15 @@ public class CellTests
         Assert.That(list[0], Is.EqualTo("Hello"));
     }
 
+    [Test]
+    public void CreateCell_TextColumn_ThrowsNotSupportedException()
+    {
+        Assert.That(
+            () => CellHelper.CreateCell("Hello", ColumnType.Text),
+            Throws.TypeOf<NotSupportedException>()
+                .With.Message.EqualTo("columnType: 'Text' must be written using the shared string table"));
+    }
+
     [TestCaseSource(nameof(CellTestCases))]
     public void CreateCell_CorrectCellValue(object value, ColumnType columnType, Cell expectedCell)
     {
