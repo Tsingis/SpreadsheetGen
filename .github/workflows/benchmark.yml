@@ -5,6 +5,7 @@ on:
       - "SpreadsheetGen/**"
       - "SpreadsheetGen.Benchmarks/**"
       - "Directory.Build.props"
+      - ".github/workflows/benchmark.yml"
   workflow_dispatch:
     inputs:
       rowCounts:
