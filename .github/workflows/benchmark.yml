@@ -22,7 +22,7 @@ on:
         description: "Target runtimes separated with space"
         required: true
         type: string
-        default: "net10.0"
+        default: "net10.0 net11.0"
 jobs:
   benchmark:
     runs-on: ubuntu-latest
@@ -42,10 +42,10 @@ jobs:
       - name: Benchmark
         run: |
           dotnet run -c Release --no-restore --no-build \
-          --framework ${{ inputs.framework }} \
-          --project SpreadsheetGen.Benchmarks -- \
-          --filter "*" \
-          --row-counts "${{ inputs.rowCounts }}" \
-          --runtimes ${{ inputs.runtimes }}
+            --framework "${{ inputs.framework || 'net10.0' }}" \
+            --project SpreadsheetGen.Benchmarks -- \
+            --filter "*" \
+            --row-counts "${{ inputs.rowCounts || '10 100 1000' }}" \
+            --runtimes ${{ inputs.runtimes || 'net10.0' }}
       - name: Publish benchmark summary
         run: cat BenchmarkDotNet.Artifacts/results/*-report-github.md >> "$GITHUB_STEP_SUMMARY"
