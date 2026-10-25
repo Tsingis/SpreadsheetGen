@@ -1,5 +1,11 @@
 name: benchmark
 on:
+  pull_request:
+    paths:
+      - "SpreadsheetGen/**"
+      - "SpreadsheetGen.Benchmarks/**"
+      - "Directory.Build.props"
+      - ".github/workflows/benchmark.yml"
   workflow_dispatch:
     inputs:
       rowCounts:
@@ -36,10 +42,10 @@ jobs:
       - name: Benchmark
         run: |
           dotnet run -c Release --no-restore --no-build \
-          --framework ${{ inputs.framework }} \
-          --project SpreadsheetGen.Benchmarks -- \
-          --filter "*" \
-          --row-counts "${{ inputs.rowCounts }}" \
-          --runtimes ${{ inputs.runtimes }}
+            --framework "${{ inputs.framework || 'net10.0' }}" \
+            --project SpreadsheetGen.Benchmarks -- \
+            --filter "*" \
+            --row-counts "${{ inputs.rowCounts || '10 100 1000' }}" \
+            --runtimes ${{ inputs.runtimes || 'net10.0' }}
       - name: Publish benchmark summary
         run: cat BenchmarkDotNet.Artifacts/results/*-report-github.md >> "$GITHUB_STEP_SUMMARY"
