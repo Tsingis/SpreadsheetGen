@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - "**.cs"
+      - "!SpreadsheetGen.Benchmarks/**"
   pull_request:
     branches:
       - main
@@ -15,6 +16,7 @@ on:
       - "global.json"
       - ".config/dotnet-tools.json"
       - ".github/workflows/test.yml"
+      - "!SpreadsheetGen.Benchmarks/**"
   workflow_dispatch:
 jobs:
   test:
